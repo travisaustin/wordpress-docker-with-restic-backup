@@ -1,0 +1,63 @@
+version: '2'
+
+services:
+
+    wordpress:
+        image: wordpress:latest
+        volumes:
+            - html_data:/var/www/html
+        ports:
+            - "8889:80"
+        restart: always
+        environment:
+            WORDPRESS_DB_HOST: db:3306
+            WORDPRESS_DB_USER: ${MYSQL_USER:-wordpress}
+            WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+            WORDPRESS_DB_DATABASE: ${MYSQL_DATABASE:-wordpress}
+
+    db:
+        image: mysql:8.1
+        volumes:
+            - db_data:/var/lib/mysql
+            - ./db-init:/docker-entrypoint-initdb.d
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+            MYSQL_USER: ${MYSQL_USER:-wordpress}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    wordpress-backup:
+        build:
+            context: build/wordpress-backup
+            dockerfile: Dockerfile
+        image: travisaustin/wordpress-backup:latest
+        volumes_from:
+            - wordpress
+        restart: always
+        environment:
+            SOURCE: /var/www/html
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+            MYSQL_USER: ${MYSQL_USER:-wordpress}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_HOST: db
+#            DISABLE: true
+
+            RESTIC_REPOSITORY: ${RESTIC_REPOSITORY}
+            RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+            RESTIC_BACKUP_HOSTNAME: ${RESTIC_BACKUP_HOSTNAME}
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            
+#    phpmyadmin: 
+#        image: phpmyadmin
+#        ports:
+#            - "8890:80"
+#        environment:
+#            PMA_HOST: 'db'
+#            PMA_USER: '${MYSQL_USER}'
+#            PMA_PASSWORD: '${MYSQL_PASSWORD}'
+        
+volumes:
+    db_data:
+    html_data:
