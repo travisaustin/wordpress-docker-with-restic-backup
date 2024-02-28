@@ -6,6 +6,6 @@ rm -rf /var/www/html/*
 
 restic -vv restore latest --target / --host $RESTIC_BACKUP_HOSTNAME
 
-mysql --user=$MYSQL_USER --password=$MYSQL_PASSWORD --host=$MYSQL_HOST $MYSQL_DATABASE < /$MYSQL_DATABASE.sql
+mysql --user=$MYSQL_USER --password=$MYSQL_PASSWORD --host=$MYSQL_HOST $MYSQL_DATABASE < /wordpress.sql
 
-rm /$MYSQL_DATABASE.sql
+mv /wordpress.sql /wordpress.sql.mostrecentrestore

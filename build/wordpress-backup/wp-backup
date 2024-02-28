@@ -11,7 +11,7 @@ fi
 
 # Adapted from https://theme.fm/a-shell-script-for-a-complete-wordpress-backup/
 
-mysqldump --user=$MYSQL_USER --password=$MYSQL_PASSWORD --host=$MYSQL_HOST $MYSQL_DATABASE --no-tablespaces --add-drop-table -c > /$MYSQL_DATABASE.sql
+mysqldump --user=$MYSQL_USER --password=$MYSQL_PASSWORD --host=$MYSQL_HOST $MYSQL_DATABASE --no-tablespaces --add-drop-table -c > /wordpress.sql
 
 # Test if the repo is yet initialized
 restic snapshots
@@ -22,8 +22,8 @@ then
     restic init
 fi
 
-restic -vv backup --host $RESTIC_BACKUP_HOSTNAME /var/www/html/ /$MYSQL_DATABASE.sql
+restic -vv backup --host $RESTIC_BACKUP_HOSTNAME /var/www/html/ /wordpress.sql
 
-rm /$MYSQL_DATABASE.sql
+mv /wordpress.sql /wordpress.sql.mostrecentbackup
 
 #restic --verbose forget --prune --keep-last 5 --keep-hourly 24 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 3

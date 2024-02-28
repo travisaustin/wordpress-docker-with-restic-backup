@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -z ${DISABLE+x} ];
+then
+    echo "Performing backup";
+else
+    echo "Backups not enabled; exiting"
+    exit;
+fi
+
+restic --verbose forget --prune --keep-last 5 --keep-hourly 24 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 3

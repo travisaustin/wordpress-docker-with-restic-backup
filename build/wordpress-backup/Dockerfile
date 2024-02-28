@@ -25,4 +25,10 @@ RUN chmod +x /usr/local/bin/wp-backup
 COPY wp-restore /usr/local/bin/wp-restore
 RUN chmod +x /usr/local/bin/wp-restore
 
+COPY wp-list /usr/local/bin/wp-list
+RUN chmod +x /usr/local/bin/wp-list
+
+COPY wp-cleanup /usr/local/bin/wp-cleanup
+RUN chmod +x /usr/local/bin/wp-cleanup
+
 CMD supercronic crontab
